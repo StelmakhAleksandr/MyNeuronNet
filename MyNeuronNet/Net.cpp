@@ -43,6 +43,10 @@ Net::Net(size_t countLayers, ...)
 	va_end(listArgs);
 }
 
+Net::Net(string filename)
+{
+}
+
 Net::~Net()
 {
 	this->layers.clear();
@@ -66,10 +70,6 @@ void Net::save(string filename)
 	ofstream file(filename);
 	file << this->getAll();
 	file.close();
-}
-
-void Net::getFromFile(string)
-{
 }
 
 
