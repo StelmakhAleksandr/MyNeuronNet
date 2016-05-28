@@ -16,9 +16,9 @@ void TrainingNet::backProp(double alpha, double beta)
 		for (size_t a = 0; a < 10900000; a++)
 		{
 			vector<Net> nets;
-#pragma omp parallel num_threads(4)//4 потока (количество задействованных ядер обычно)
-			{
-#pragma omp for	
+//#pragma omp parallel num_threads(4)//4 потока (количество задействованных ядер обычно)
+			//{
+//#pragma omp for	
 				for (int i = 0; i < countStreams; i++)//потоки
 				{
 					nets.push_back(*this->net);
@@ -41,7 +41,7 @@ void TrainingNet::backProp(double alpha, double beta)
 						}
 				}
 
-			}
+			//}
 			Layers *layerss = this->net->getLayers();
 			for (size_t i = (*layerss).size() - 1; i > 0; i--)
 				for (size_t j = 0; j < (*layerss)[i].size(); j++)
