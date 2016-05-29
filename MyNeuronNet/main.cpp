@@ -1,29 +1,17 @@
 #include "TrainingNet.h"
-//ololo
+
 int main()
 {
 	setlocale(LC_ALL, "rus");
 	srand(time(NULL));
-	Net *net = new Net(5,2,3,3,3,1);
-
-	vector <double> res = net->getResultDoubleVect(0.45, 0.55);
-	for (size_t i = 0; i < res.size(); i++)
-	{
-		cout << res[i] << endl;
-	}
-
+	
+	//Net *net = new Net(5,2,3,3,3,1);
 	//TrainingNet trainNet(net);
-	//trainNet.backProp(0.01, 0.3);
-	
-	res = net->getResultDoubleVect(0.45, 0.55);
-	for (size_t i = 0; i < res.size(); i++)
-	{
-		cout << res[i] << endl;
-	}
-	
-	net->save("test.dat");
-	//cout<<net->getAll();
-
-	
+	//trainNet.backProp(0.01, 0.3);  //обучение сети
+	//net->save("test.dat");//сохранение сети
+	Net *net2 = new Net("test.dat");//загрузка сохранений
+	double res = net2->getResultDouble(0.45, 0.55);
+	cout << res << endl;
+	//cout << net2->getAll() << endl;
 	return 0;
 }

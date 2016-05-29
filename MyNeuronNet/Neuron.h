@@ -1,12 +1,18 @@
 #pragma once
-#include "Input.h"
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <string>
+#include <ctime>
+#include <vector>
+#include <fstream>
+using namespace std;
 class Neuron;
 typedef vector<Neuron> Layer;
 typedef vector<Layer> Layers;
 class Neuron
 {
 private:
-	vector<Input> inputs;
+	vector<double> inputs;
 	double result;
 	double delta;
 	double prevDelta;
@@ -24,6 +30,7 @@ public:
 	void setResult(double);
 	void setWeights(double,double);
 	Neuron(size_t);
+	Neuron(vector<double>);
 	~Neuron();
 	string show();
 };

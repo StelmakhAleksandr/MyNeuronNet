@@ -43,6 +43,34 @@ Net::Net(size_t countLayers, ...)
 	va_end(listArgs);
 }
 
+Net::Net(string filename)
+{
+	ifstream file(filename);
+	size_t countNeurons;
+	size_t countWeights;
+	double weight;
+	string buf;
+	while (!file.eof())
+	{
+		getline(file, buf);
+		if (!buf[0])
+			break;
+		countNeurons = atoi(strtok((char*)buf.c_str(), " "));
+		countWeights = atoi(strtok(NULL, " "));
+		this->layers.push_back(Layer());//добавляем слой
+		for (size_t j = 0; j < countNeurons; j++)
+		{
+			vector<double> weights;
+			getline(file, buf);
+			weights.push_back(atof(strtok((char*)buf.c_str(), " ")));
+			for (size_t i = 1; i < countWeights; i++)
+				weights.push_back(atof(strtok(NULL, " ")));
+			this->layers.back().push_back(Neuron(weights));
+		}
+	}
+	file.close();
+}
+
 Net::~Net()
 {
 	this->layers.clear();
@@ -55,21 +83,16 @@ string Net::getAll()
 	{
 		res += to_string(it->size())+" "+to_string(it->begin()->getCount())+"\n";
 		for (Layer::iterator jt = it->begin(); jt < it->end(); jt++)
-			res += jt->show();		
+			res += jt->show();
 	}
 	return res;
 }
 
 void Net::save(string filename)
 {
-	cout << getAll();
 	ofstream file(filename);
 	file << this->getAll();
 	file.close();
-}
-
-void Net::getFromFile(string)
-{
 }
 
 
@@ -103,4 +126,15 @@ vector<string> Net::getResultStringVect(double args, ...)
 vector<double> Net::getResultDoubleVect(double args, ...)
 {
 	return Net::layerToDoubleVect(this->getResult(args));
+}
+
+double Net::getResultDouble(double args, ...)
+{
+	Layer layer = this->getResult(args);
+	if (layer.size() != 1)
+	{
+		cout << "error";
+		return 0;
+	}
+	return layer.back().getResult();
 }

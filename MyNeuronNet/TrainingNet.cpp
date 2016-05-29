@@ -13,7 +13,7 @@ void TrainingNet::backProp(double alpha, double beta)
 {
 	size_t countStreams = 4;
 	unsigned int start_time = clock();
-		for (size_t a = 0; a < 10900000; a++)
+		for (size_t a = 0; a < 109000; a++)
 		{
 			vector<Net> nets;
 //#pragma omp parallel num_threads(4)//4 потока (количество задействованных ядер обычно)
