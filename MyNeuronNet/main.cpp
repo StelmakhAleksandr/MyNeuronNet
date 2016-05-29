@@ -1,5 +1,5 @@
 #include "TrainingNet.h"
-
+//test
 int main()
 {
 	setlocale(LC_ALL, "rus");
@@ -11,7 +11,7 @@ int main()
 	//net->save("test.dat");//сохранение сети
 	Net *net2 = new Net("test.dat");//загрузка сохранений
 	double res = net2->getResultDouble(0.45, 0.55);
-	cout << res << endl;
+	cout << res << endl<<endl;
 	//cout << net2->getAll() << endl;
 	return 0;
 }
