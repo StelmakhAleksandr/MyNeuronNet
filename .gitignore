@@ -5,3 +5,5 @@ x64/
 MyNeuronNet.opensdf
 MyNeuronNet.sdf
 MyNeuronNet.v12.suo
+MyNeuronNet/MyNeuronNet.vcxproj
+MyNeuronNet/MyNeuronNet.vcxproj.filters
