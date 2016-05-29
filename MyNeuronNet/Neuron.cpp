@@ -3,9 +3,14 @@
 Neuron::Neuron(size_t countInputs)
 {
 	for (size_t i = 0; i < countInputs; i++)
-		this->inputs.push_back(Input());
+		this->inputs.push_back((double)rand() / RAND_MAX);
 	this->delta = 0.0;
 	this->prevDelta = 0.0;
+}
+
+Neuron::Neuron(vector<double> weights)
+{
+	this->inputs = weights;
 }
 
 Neuron::~Neuron()
@@ -16,9 +21,9 @@ Neuron::~Neuron()
 string Neuron::show()
 {
 	string res;
-	for (vector<Input>::iterator it = this->inputs.begin(); it < this->inputs.end(); it++)
-		res+=to_string(it->weight)+"\n";
-	return res;
+	for (vector<double>::iterator it = this->inputs.begin(); it < this->inputs.end(); it++)
+		res+=to_string(*it)+" ";
+	return res+"\n";
 }
 
 double Neuron::sigmoid(double newResult)
@@ -57,7 +62,7 @@ void Neuron::setDelta(Layers::iterator prevLayer)//prevLAyer.countNeuron == this
 	for (size_t i = 0; i < this->inputs.size(); i++)
 	{
 		Layer::iterator neuron = prevLayer->begin() + i;
-		newDelta += neuron->getDelta()*this->inputs[i].weight;
+		newDelta += neuron->getDelta()*this->inputs[i];
 	}
 	this->delta = this->sigmoidDelta(newDelta);
 }
@@ -78,7 +83,7 @@ void Neuron::setResult(Layers::iterator prevLayer)
 	for (size_t i = 0; i < this->inputs.size(); i++)
 	{
 		Layer::iterator neuron = prevLayer->begin() + i;
-		newResult += neuron->getResult()*this->inputs[i].weight;
+		newResult += neuron->getResult()*this->inputs[i];
 	}
 	this->result = this->sigmoid(newResult);
 }
@@ -92,7 +97,7 @@ void Neuron::setWeights(double alpha, double beta)
 {
 	for (size_t i = 0; i < this->inputs.size(); i++)
 	{
-		this->inputs[i].weight += this->getPrevDelta()*alpha;
-		this->inputs[i].weight += this->getDelta()*beta;
+		this->inputs[i] += this->getPrevDelta()*alpha;
+		this->inputs[i] += this->getDelta()*beta;
 	}
 }

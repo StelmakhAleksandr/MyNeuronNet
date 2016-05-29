@@ -17,5 +17,6 @@ public:
 	Layer getResult(double, ...);
 	vector<string> getResultStringVect(double, ...);
 	vector<double> getResultDoubleVect(double, ...);
+	double getResultDouble(double, ...);
 };
 
