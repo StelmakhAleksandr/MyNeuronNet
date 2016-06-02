@@ -24,6 +24,7 @@ public:
 	double getPrevDelta();
 	void setPrevDelta(double);
 	void setDelta(Layers::iterator);
+	void setDelta(Neuron);
 	void setDelta(double);
 	double getResult();
 	void setResult(Layers::iterator);

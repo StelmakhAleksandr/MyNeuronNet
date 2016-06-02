@@ -67,6 +67,14 @@ void Neuron::setDelta(Layers::iterator prevLayer)//prevLAyer.countNeuron == this
 	this->delta = this->sigmoidDelta(newDelta);
 }
 
+void Neuron::setDelta(Neuron neuron)
+{
+	double newDelta = 0.0;
+	for (size_t i = 0; i < this->inputs.size(); i++)
+		newDelta += neuron.getDelta()*this->inputs[i];
+	this->delta = this->sigmoidDelta(newDelta);
+}
+
 void Neuron::setDelta(double delta)
 {
 	this->delta = delta;
@@ -97,7 +105,7 @@ void Neuron::setWeights(double alpha, double beta)
 {
 	for (size_t i = 0; i < this->inputs.size(); i++)
 	{
-		this->inputs[i] += this->getPrevDelta()*alpha;
-		this->inputs[i] += this->getDelta()*beta;
+		this->inputs[i] += this->getPrevDelta()*alpha;//innertnost
+		this->inputs[i] += this->getDelta()*beta;//speed learning
 	}
 }
