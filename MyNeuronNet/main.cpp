@@ -13,7 +13,7 @@ int main(int argc, char **argv)
 	Net *net = new Net(5,2,3,2,2,1);
 	TrainingNet trainNet(net);
 
-	trainNet.backProp(0.1, 0.5, 1, numProc, countProces);  //обучение сети
+	trainNet.backProp(0.1, 0.5, 100, numProc, countProces);  //обучение сети
 
 	if (numProc == 0)
 	{

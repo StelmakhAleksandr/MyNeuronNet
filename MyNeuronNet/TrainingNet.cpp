@@ -9,7 +9,7 @@ TrainingNet::~TrainingNet()
 {
 }
 
-void TrainingNet::updateNet(vector<Net> nets, double alpha, double beta)
+void TrainingNet::updateNet(vector<vector<vector<double>>> nets, double alpha, double beta)
 {
 	Layers *layers = this->net->getLayers();
 	for (Layers::iterator layer = layers->begin(); layer < layers->end(); layer++)
@@ -20,11 +20,17 @@ void TrainingNet::updateNet(vector<Net> nets, double alpha, double beta)
 			int j = distance(layer->begin(), neuron);
 			neuron->setPrevDelta(neuron->getDelta());
 			double delta = 0.0;
-			for (size_t k = 0; k < 4; k++)
-				delta += (*nets[k].getLayers())[i][j].getDelta();//delta += (*nets[k].getLayers())[i][j].getDelta();
+			for (size_t k = 0; k < nets.size(); k++)
+			{
+				delta += nets[k][i][j];//delta += (*nets[k].getLayers())[i][j].getDelta();
+				cout << nets[k][i][j] << " ";
+			}
 			neuron->setDelta(delta);
+		//	cout << delta;
 		}
+		cout << endl;
 	}
+	cout << endl;
 	for (Layers::iterator layer = this->net->getLayers()->begin() + 1; layer < this->net->getLayers()->end(); layer++)//проход по слоям начиная со 2
 		for (Layer::iterator neuron = layer->begin(); neuron < layer->end(); neuron++)//проход по нейронам
 			neuron->setWeights(alpha, beta);
@@ -51,23 +57,50 @@ void TrainingNet::backProp(double alpha, double beta, unsigned int countIter, in
 						neuron->setDelta(neuron->getResult()*(1 - neuron->getResult())*(n1*n2 - neuron->getResult()));
 					else
 						neuron->setDelta(layer + 1);
+					//cout << neuron->getDelta() << " ";
 				}
+			//	cout << endl;
 			}
-			vector<vector<double>> vectDelta = Net::NetDeltaToDoubleVectDouble(&procNet);
-			for (vector<vector<double>>::iterator vVD = vectDelta.begin(); vVD < vectDelta.end(); vVD++)
+			vector<double> vDelta;
+			vector<vector<double>> vVDelta = Net::NetDeltaToDoubleVectDouble(&procNet);
+			for (size_t i = 0; i < vVDelta.size(); i++)
 			{
-				//MPI_Send(&test[0], countData, MPI_DOUBLE, 0, iter, MPI_COMM_WORLD);
-				/*for (vector<double>::iterator vD = vVD->begin(); vD < vVD->end(); vD++)
+				for (size_t j = 0; j < vVDelta[i].size(); j++)
 				{
-					cout << *vD << " ";
+					vDelta.push_back(vVDelta[i][j]);
+					//cout << vVDelta[i][j] << " ";
 				}
-				cout << endl;*/
+				//cout << endl;
 			}
+			MPI_Send(&vDelta[0], vDelta.size(), MPI_DOUBLE, 0, iter, MPI_COMM_WORLD);
 		}
 		else
 		{
-			vector<Net> nets;
-			//this->updateNet(nets, alpha, beta);
+			vector<vector<vector<double>>> vVVDelta;
+			for (int i = 1; i < countProces; i++)
+			{
+				vector<double> vDelta(this->net->getGeneralNeurons());
+				MPI_Recv(&vDelta[0], this->net->getGeneralNeurons(), MPI_DOUBLE, i, iter, MPI_COMM_WORLD, &status);
+				for (int j = 0; j < this->net->getGeneralNeurons(); j++)
+				{
+					//cout << vDelta[j] << " ";
+				}
+				//cout << endl;
+				vVVDelta.push_back(this->net->vectorDeltaToVVDelta(vDelta));
+			}
+			for (size_t i = 0; i < vVVDelta.size(); i++)
+			{
+				for (size_t j = 0; j < vVVDelta[i].size(); j++)
+				{
+					for (size_t k = 0; k < vVVDelta[i][j].size(); k++)
+					{
+						//cout << vVVDelta[i][j][k] << " ";
+					}
+					//cout << endl;
+				}
+				//cout << endl;
+			}
+			this->updateNet(vVVDelta, alpha, beta);
 		}
 	}
 }

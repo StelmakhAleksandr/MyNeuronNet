@@ -6,7 +6,7 @@ class TrainingNet
 {
 private:
 	Net *net;
-	void updateNet(vector<Net> net , double, double);
+	void updateNet(vector<vector<vector<double>>>, double, double);
 public:
 	TrainingNet(Net*);
 	~TrainingNet();

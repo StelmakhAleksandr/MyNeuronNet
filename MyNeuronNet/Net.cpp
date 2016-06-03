@@ -5,6 +5,30 @@ Layers* Net::getLayers()
 	return &this->layers;
 }
 
+vector<vector<double>> Net::vectorDeltaToVVDelta(vector<double> vDelta)
+{
+	vector<vector<double>> vVDelta;
+	int num=0;
+	for (int i = 0; i < this->conf.size(); i++)
+	{
+		vVDelta.push_back(vector<double>());
+		for (int j = 0; j < this->conf[i]; j++)
+		{
+			vVDelta[i].push_back(vDelta[num]);
+			num++;
+		}
+	}
+	return vVDelta;
+}
+
+int Net::getGeneralNeurons()
+{
+	int count = 0;
+	for (vector<int>::iterator neurons = this->conf.begin(); neurons<this->conf.end(); neurons++)
+		count += *neurons;
+	return count;
+}
+
 vector<string> Net::layerToStringVect(Layer layer)
 {
 	vector<string> stringVect;
@@ -13,6 +37,16 @@ vector<string> Net::layerToStringVect(Layer layer)
 		stringVect.push_back(to_string(neuron->getResult()));
 	}
 	return stringVect;
+}
+
+vector<double> Net::layerDeltaToDoubleVect(Layer layer)
+{
+	vector<double> doubleVect;
+	for (Layer::iterator neuron = layer.begin(); neuron < layer.end(); neuron++)//проход по нейронам
+	{
+		doubleVect.push_back(neuron->getDelta());
+	}
+	return doubleVect;
 }
 
 vector<double> Net::layerToDoubleVect(Layer layer)
@@ -52,6 +86,7 @@ Net::Net(size_t countLayers, ...)
 		for (size_t j = 0; j < countNeurons; j++)
 			this->layers.back().push_back(Neuron(countInputs));//создаем на слое необходимое количество нейронов с необходимым количеством входов	
 		countInputs = countNeurons;//количество входов у нейронов на i слое = количеству нейронов на i-1 слое
+		this->conf.push_back(countNeurons);
 	}
 	va_end(listArgs);
 }
