@@ -25,6 +25,19 @@ vector<double> Net::layerToDoubleVect(Layer layer)
 	return doubleVect;
 }
 
+vector<vector<double>> Net::NetDeltaToDoubleVectDouble(Net *net)
+{
+	vector<vector<double>> layersdouble;
+	Layers *layers = net->getLayers();
+	for (Layers::iterator layer = layers->begin(); layer < layers->end(); layer++)
+	{
+		layersdouble.push_back(vector<double>());
+		for (Layer::iterator neuron = layer->begin(); neuron < layer->end(); neuron++)//проход по нейронам
+			layersdouble.back().push_back(neuron->getDelta());
+	}
+	return layersdouble;
+}
+
 Net::Net(size_t countLayers, ...)
 {
 	va_list listArgs; 

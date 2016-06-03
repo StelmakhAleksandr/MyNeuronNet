@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <ctime>
+#include "mpi.h"
 #include <vector>
 #include <fstream>
 using namespace std;

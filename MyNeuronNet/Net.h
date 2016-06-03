@@ -9,6 +9,7 @@ public:
 	Layers* getLayers();
 	static vector<string> layerToStringVect(Layer);
 	static vector<double> layerToDoubleVect(Layer);
+	static vector<vector<double>> NetDeltaToDoubleVectDouble(Net*);
 	Net(size_t, ...);//1 параметр - количество слоев, остальные количество нейронов на слое
 	Net(string);
 	~Net();
