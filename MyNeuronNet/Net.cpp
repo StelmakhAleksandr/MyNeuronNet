@@ -29,6 +29,18 @@ int Net::getGeneralNeurons()
 	return count;
 }
 
+int Net::getWeights()
+{
+	int count = 0;
+	int countPrev = this->conf[0];
+	for (vector<int>::iterator neurons = this->conf.begin(); neurons < this->conf.end(); neurons++)
+	{
+		count += *neurons*countPrev;
+		countPrev = *neurons;
+	}
+	return count;
+}
+
 vector<string> Net::layerToStringVect(Layer layer)
 {
 	vector<string> stringVect;
@@ -117,6 +129,38 @@ Net::Net(string filename)
 		}
 	}
 	file.close();
+}
+
+vector<double> Net::NetWeightsToVVVD()
+{
+	vector<double> weights;
+	for (Layers::iterator layer = layers.begin(); layer < layers.end(); layer++)
+		for (Layer::iterator neuron = layer->begin(); neuron < layer->end(); neuron++)//проход по нейронам
+		{
+			vector<double> tmp = neuron->getWeights();
+			for (size_t i = 0; i < tmp.size(); i++)
+				weights.push_back(tmp[i]);
+		}
+	return weights;
+}
+
+void Net::updateWeights(vector<double> weights)
+{
+	int countLayers = this->conf.size();
+	size_t countInputs = this->conf[0];
+	int numWeights = 0;
+	for (size_t i = 0; i < countLayers; i++)//проходим по всем параметрам(слоям)
+	{
+		for (size_t j = 0; j < this->conf[i]; j++)
+		{
+			vector<double> tmp;
+			for (size_t k = numWeights; k < numWeights+countInputs; k++)
+				tmp.push_back(weights[k]);
+			this->layers[i][j].setInputs(tmp);//создаем на слое необходимое количество нейронов с необходимым количеством входов		
+			numWeights += countInputs;
+		}
+		countInputs = this->conf[i];//количество входов у нейронов на i слое = количеству нейронов на i-1 слое
+	}
 }
 
 Net::~Net()

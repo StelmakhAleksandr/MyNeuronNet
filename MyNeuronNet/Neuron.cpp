@@ -109,3 +109,13 @@ void Neuron::setWeights(double alpha, double beta)
 		this->inputs[i] += this->getDelta()*beta;//speed learning
 	}
 }
+
+void Neuron::setInputs(vector<double> inputs)
+{
+	this->inputs = inputs;
+}
+
+vector<double> Neuron::getWeights()
+{
+	return this->inputs;
+}

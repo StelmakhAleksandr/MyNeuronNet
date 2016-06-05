@@ -31,6 +31,8 @@ public:
 	void setResult(Layers::iterator);
 	void setResult(double);
 	void setWeights(double,double);
+	void setInputs(vector<double>);
+	vector<double> getWeights();
 	Neuron(size_t);
 	Neuron(vector<double>);
 	~Neuron();
