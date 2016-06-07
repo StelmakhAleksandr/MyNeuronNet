@@ -96,7 +96,7 @@ Net::Net(size_t countLayers, ...)
 			countInputs = countNeurons;//количество входов у нейронов на 1 слое
 		this->layers.push_back(Layer());//добавляем слой
 		for (size_t j = 0; j < countNeurons; j++)
-			this->layers.back().push_back(Neuron(countInputs));//создаем на слое необходимое количество нейронов с необходимым количеством входов	
+			this->layers.back().push_back(Neuron(countInputs,j));//создаем на слое необходимое количество нейронов с необходимым количеством входов	
 		countInputs = countNeurons;//количество входов у нейронов на i слое = количеству нейронов на i-1 слое
 		this->conf.push_back(countNeurons);
 	}
@@ -125,7 +125,7 @@ Net::Net(string filename)
 			weights.push_back(atof(strtok((char*)buf.c_str(), " ")));
 			for (size_t i = 1; i < countWeights; i++)
 				weights.push_back(atof(strtok(NULL, " ")));
-			this->layers.back().push_back(Neuron(weights));
+			this->layers.back().push_back(Neuron(weights,j));
 		}
 	}
 	file.close();
@@ -142,6 +142,52 @@ vector<double> Net::NetWeightsToVVVD()
 				weights.push_back(tmp[i]);
 		}
 	return weights;
+}
+
+vector<double> Net::NetDWTToVVVD(double alpha, double beta)
+{
+	vector<double> dwt;
+	for (Layers::iterator layer = layers.begin()+1; layer < layers.end(); layer++)
+		for (Layer::iterator neuron = layer->begin(); neuron < layer->end(); neuron++)//проход по нейронам
+		{
+			vector<double> tmp = neuron->calcDwt(alpha,beta,layer-1);
+			for (size_t i = 0; i < tmp.size(); i++)
+			{
+				dwt.push_back(tmp[i]);
+			}
+		}
+	return dwt;
+}
+
+void Net::resetDwt()
+{
+	int countLayers = this->conf.size();
+	for (size_t i = 0; i < countLayers; i++)
+	{
+		for (size_t j = 0; j < this->conf[i]; j++)
+		{
+			this->layers[i][j].resetDwt();
+		}
+	}
+}
+
+void Net::updateDwt(vector<double> dwt)
+{
+	int countLayers = this->conf.size();
+	size_t countInputs = this->conf[0];
+	int numDwt = 0;
+	for (size_t i = 1; i < countLayers; i++)
+	{
+		for (size_t j = 0; j < this->conf[i]; j++)
+		{
+			vector<double> tmp;
+			for (size_t k = numDwt; k < numDwt + countInputs; k++)
+				tmp.push_back(dwt[k]);
+			this->layers[i][j].setDwt(tmp);
+			numDwt += countInputs;
+		}
+		countInputs = this->conf[i];
+	}
 }
 
 void Net::updateWeights(vector<double> weights)
@@ -200,33 +246,15 @@ Layer Net::getResult(double args, ...)
 			if (layer == this->layers.begin())
 			{
 				neuron->setResult(arg);
-				arg = va_arg(listArgs, double);
+				arg = va_arg(listArgs, double);		
 			}
 			else
-				neuron->setResult(layer-1);
+			{
+				neuron->setResult(layer - 1);
+			}
 		}
 	}
 	va_end(listArgs);
 	return this->layers.back();
 }
 
-vector<string> Net::getResultStringVect(double args, ...)
-{
-	return Net::layerToStringVect(this->getResult(args));
-}
-
-vector<double> Net::getResultDoubleVect(double args, ...)
-{
-	return Net::layerToDoubleVect(this->getResult(args));
-}
-
-double Net::getResultDouble(double args, ...)
-{
-	Layer layer = this->getResult(args);
-	if (layer.size() != 1)
-	{
-		cout << "error";
-		return 0;
-	}
-	return layer.back().getResult();
-}

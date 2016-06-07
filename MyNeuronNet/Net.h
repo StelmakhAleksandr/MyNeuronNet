@@ -18,13 +18,13 @@ public:
 	Net(size_t, ...);//1 параметр - количество слоев, остальные количество нейронов на слое
 	Net(string);
 	vector<double> NetWeightsToVVVD();
+	vector<double> NetDWTToVVVD(double,double);
+	void resetDwt();
+	void updateDwt(vector<double> dwt);
 	void updateWeights(vector<double>);
 	~Net();
 	string getAll();
 	void save(string);//сохраняем настройки сети
 	Layer getResult(double, ...);
-	vector<string> getResultStringVect(double, ...);
-	vector<double> getResultDoubleVect(double, ...);
-	double getResultDouble(double, ...);
 };
 
